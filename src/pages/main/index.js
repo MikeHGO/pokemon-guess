@@ -19,7 +19,7 @@ export default function Main({ navigation }) {
 
 				<TouchableOpacity
 					title="START"
-					onPress={() => navigation.navigate('InGame', { gen: 1 })}
+					onPress={() => navigation.navigate('InGame', { gen: 0 })}
 				>
 					<BtnStyle>
 						<BtnText>START</BtnText>

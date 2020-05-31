@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import {
 	Container,
 	SearchBar,
@@ -16,6 +16,7 @@ import {
 	PokemonSprite,
 	PokemonName,
 } from './styles';
+import api from '../../services/api';
 
 const generation = [
 	// Lista de gerações pokémon
@@ -27,7 +28,6 @@ const generation = [
 	{ name: 6, start: 650, amount: 72 },
 	{ name: 7, start: 722, amount: 80 },
 ];
-let arrayGen = [];
 
 const InGame = ({ navigation }) => {
 	const route = useRoute();
@@ -43,9 +43,9 @@ const InGame = ({ navigation }) => {
 	const [scoreP1Value, setScoreP1Value] = useState(0);
 	const [scoreP2Value, setScoreP2Value] = useState(0);
 	const [pokemonSpriteValue, setpokemonSpriteValue] = useState(
-		'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/791.png'
+		'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/101.png'
 	);
-	const [pokemonNameValue, setPokemonNameValue] = useState('ditto');
+	const [pokemonNameValue, setPokemonNameValue] = useState('Sudowoodo');
 	const [pokemonSpriteVisible, setPokemonSpriteVisible] = useState({
 		tintColor: 'black',
 		width: 300,
@@ -82,18 +82,28 @@ const InGame = ({ navigation }) => {
 	let btnFlag = false;
 
 	// quantidade de pokemons a serem sorteados
-	let pokemonTotalMax = 20;
+	const [pkMax, setPkMax] = useState(20);
+
+	let arrayGen = [];
+	// const [arrayGen, setArrayGen] = useState([]);
 
 	// jogador atual
-	let currentPlayer = 'PlayerTwo';
+	const [currentPlayer, setCurrentPlayer] = useState('PlayerTwo');
 
 	// 20s, tempo do intervalo para gerar novo pokemon em milisegundos
 	let intervalTime = 20000;
+
+	async function pokeApiLoad(pkId) {
+		const resp = await api.get(`${pkId}`);
+		setPokemonNameValue(resp.data['name']);
+		setpokemonSpriteValue(resp.data['sprites']['front_default']);
+	}
 
 	function startGame() {
 		// limpar pontuação
 		setScoreP1Value(0);
 		setScoreP2Value(0);
+		pkMax = 20;
 
 		arrayGen = [];
 		// preenche o array com os ids da geração escolhida
@@ -113,21 +123,22 @@ const InGame = ({ navigation }) => {
 
 	function setArray(genChoosed) {
 		// INICIO E TOTAL DE POKEMON DA GERACAO ESCOLHIDA <<<
-		let inicio = generation[gen].start;
-		let qtd = generation[gen].amount;
+		let inicio = generation[genChoosed].start;
+		let qtd = generation[genChoosed].amount;
 
 		// preenche o arrayGen com os IDs da geracao escolhida
 		for (let index = 0; index < qtd; index++) {
 			arrayGen[index] = inicio;
+			// setArrayGen((preArray) => [...preArray, index]);
 			inicio++;
 		}
 	}
 
 	function setNewPokemon() {
 		// verificar se todos os pokemons já foram sorteados
-		if (arrayGen.length == 0 || pokemonTotalMax == 0) {
+		if (arrayGen.length == 0 || pkMax == 0) {
 			// tela de final com o jogador vencedor e botao para retornar pra tela inicial. edit: feito
-			clearInterval(pokemonTimer);
+			clearInterval(newPokemonInterval);
 			return setTimeout(() => {
 				navigation.navigate('GameOver', { scoreP1Value, scoreP2Value });
 			}, 4000);
@@ -143,23 +154,28 @@ const InGame = ({ navigation }) => {
 		setPokemonSpriteVisible(pkSpriteHide);
 		setPokemonNameVisible(pkNameHide);
 
+		// MONSTRA POKEMON
+		// setPokemonSpriteVisible(pkSpriteVisible);
+		// setPokemonNameVisible(pkNameVisible);
+
 		// atualiza o sprite e o nome
-		setPokemonNameValue('Abra');
-		setpokemonSpriteValue('https://....');
+		pokeApiLoad(num);
 
 		// remove o index sorteado do arrayGen
 		arrayGen.splice(index, 1);
+		// setArrayGen((preArray) => preArray.splice(index, 1));  //crasha
 
 		// atualiza total de pokemons sorteados
-		pokemonTotalMax--;
+		// // pkMax--;
+		setPkMax((preValue) => preValue - 1);
 
 		// Atualiza currentPlayer
 		if (currentPlayer == 'PlayerOne') {
-			currentPlayer = 'PlayerTwo';
+			setCurrentPlayer('PlayerTwo');
 			setP2Color(scoreColorActive);
 			setP1Color(scoreColorNone);
 		} else {
-			currentPlayer = 'PlayerOne';
+			setCurrentPlayer('PlayerOne');
 			setP1Color(scoreColorActive);
 			setP2Color(scoreColorNone);
 		}
@@ -168,25 +184,52 @@ const InGame = ({ navigation }) => {
 		btnFlag = false;
 	}
 
-	const pokemonTimer = () => {
+	// startGame();
+
+	var newPokemonInterval;
+
+	function pokemonTimer() {
 		// A cada intervalTime *20s, chama a função de gerar novo pokemon
 		newPokemonInterval = setInterval(setNewPokemon, intervalTime);
-	};
+		// newPokemonInterval = setTimeout(updateTime, 1000);
+	}
 
+	// let timeLeft = 3;
+	// function updateTime() {
+	// 	if (timeLeft > 1) {
+	// 		timeLeft = 21;
+	// 		setNewPokemon();
+	// 	}
+	// 	timeLeft--;
+	// }
+	setArray(genChoosed);
 	const checkSearchBar = () => {
+		setNewPokemon();
+		console.log(
+			' ArraySize: ' +
+				arrayGen.length +
+				' Total: ' +
+				pkMax +
+				' currentPlayer: ' +
+				currentPlayer
+		);
 		// impede multiplas ativações
-		if (btnFlag) {
+		if (btnFlag == true) {
+			console.log('btn true');
 			return;
 		}
+
+		btnFlag = true;
 		// checa se o valor do <SearchBar> é igual ao nome do <PokemonName>
 		if (searchBarValue.trim().toLowerCase() == pokemonNameValue) {
 			// controle de ativações
-			btnFlag = true;
+			btnFlag = false;
 			return guessRight(true);
 		}
 
 		// muda o backgroundo do pokemon box para sinalizar erro
 		setPokemonBoxColor(pkBoxColorRed);
+
 		setTimeout(() => {
 			setPokemonBoxColor(pkBoxColorWhite);
 		}, 600);
@@ -200,17 +243,15 @@ const InGame = ({ navigation }) => {
 			// atualiza as pontuacoes
 			if (currentPlayer == 'PlayerOne') {
 				setScoreP1Value((prevScore) => prevScore + 1);
-				// currentPlayer = 'PlayerTwo';
 			} else {
 				setScoreP2Value((prevScore) => prevScore + 1);
-				// currentPlayer = 'PlayerOne';
 			}
 		}
 
 		// verificar se todos os pokemons já foram sorteados
-		if (arrayGen.length == 0 || pokemonTotalMax == 0) {
+		if (arrayGen.length == 0 || pkMax == 0) {
 			// tela de final com o jogador vencedor e botao para retornar pra tela inicial. edit: feito
-			clearInterval(pokemonTimer);
+			clearInterval(newPokemonInterval);
 			return setTimeout(() => {
 				navigation.navigate('GameOver', { scoreP1Value, scoreP2Value });
 			}, 4000);

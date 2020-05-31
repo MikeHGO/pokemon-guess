@@ -70,6 +70,7 @@ export const PokemonName = styled.Text`
 	text-align: center;
 	font-weight: 900;
 	margin-top: 10px;
+	text-transform: capitalize;
 `;
 
 export const ScoreBox = styled.View`
