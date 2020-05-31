@@ -20,7 +20,7 @@ export const SubContainer = styled.View`
 export const BtnStyle = styled.View`
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 50px;
+	margin-top: 30px;
 	width: 115px;
 	height: 50px;
 	align-items: center;
@@ -59,7 +59,7 @@ export const PokemonBox = styled.View`
 	width: 296px;
 	height: 296px;
 	border-radius: 4px;
-	margin-top: 220px;
+	margin-top: 120px;
 `;
 // filter: contrast(0%) brightness(50%); INVALIDO <<<
 export const PokemonSprite = styled.Image``;
@@ -69,6 +69,7 @@ export const PokemonName = styled.Text`
 	font-size: 30px;
 	text-align: center;
 	font-weight: 900;
+	margin-top: 10px;
 `;
 
 export const ScoreBox = styled.View`
@@ -89,4 +90,5 @@ export const ScoreText = styled.Text`
 	font-weight: 900;
 	padding-left: 20px;
 	padding-right: 20px;
+	border-radius: 4px;
 `;

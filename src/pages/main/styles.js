@@ -10,9 +10,9 @@ export const SubContainer = styled.View`
 `;
 
 export const Title = styled.Text`
-	margin-top: 150px;
+	margin-top: 250px;
 	color: white;
-	font-size: 90px;
+	font-size: 70px;
 	text-align: center;
 	letter-spacing: 3px;
 	font-weight: 900;

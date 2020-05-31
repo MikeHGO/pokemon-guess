@@ -10,14 +10,17 @@ export default function GameOver({ navigation }) {
 	};
 
 	const route = useRoute();
-	let scoreP1 = route.params.scoreP1;
-	let scoreP2 = route.params.scoreP2;
+	// let scoreP1 = route.params.scoreP1;
+	// let scoreP2 = route.params.scoreP2;
+
+	let scoreP1 = 8;
+	let scoreP2 = 5;
 	let winner = `EMPATE!`;
 
 	if (scoreP1 > scoreP2) {
-		winner = `PLAYER{'\n'}ONE{'\n'}WIN!`;
+		winner = `PLAYER\nONE\nWIN!`;
 	} else if (scoreP2 > scoreP1) {
-		winner = `PLAYER{'\n'}TWO{'\n'}WIN!`;
+		winner = `PLAYER\nTWO\nWIN!`;
 	}
 
 	return (

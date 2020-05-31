@@ -12,7 +12,7 @@ export default function Main({ navigation }) {
 		<Container source={imageBg} style={styles.image}>
 			<SubContainer>
 				<Title>
-					QUEM É{'\n'}ESSE{'\n'}POKEMON!
+					QUEM É{'\n'}ESSE{'\n'}POKEMON
 				</Title>
 
 				{/* Gerações em radio */}
