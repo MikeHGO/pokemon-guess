@@ -155,8 +155,8 @@ const InGame = ({ navigation }) => {
 		setPokemonNameVisible(pkNameHide);
 
 		// MONSTRA POKEMON
-		// setPokemonSpriteVisible(pkSpriteVisible);
-		// setPokemonNameVisible(pkNameVisible);
+		setPokemonSpriteVisible(pkSpriteVisible);
+		setPokemonNameVisible(pkNameVisible);
 
 		// atualiza o sprite e o nome
 		pokeApiLoad(num);
